@@ -2,7 +2,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LineStorage {
     private String line = "";
-    private AtomicBoolean finished = new AtomicBoolean(false);
+    private final AtomicBoolean isFinished = new AtomicBoolean(false);
 
     public String getLine() {
         return line;
@@ -13,7 +13,7 @@ public class LineStorage {
     }
 
     public AtomicBoolean isFinished() {
-        return finished;
+        return isFinished;
     }
 
 }

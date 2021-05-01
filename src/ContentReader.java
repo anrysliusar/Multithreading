@@ -3,40 +3,40 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ContentReader implements Runnable{
-    private LineStorage lineStorage;
-    private BufferedReader bufferedReader;
+    private final LineStorage lineStorage;
+    private final BufferedReader bufferedReader;
     private AtomicBoolean isLinePrinted;
 
 
-    public ContentReader(LineStorage lineStorage, BufferedReader bufferedReader, AtomicBoolean isLinePrinted) {
+    public ContentReader(LineStorage lineStorage, BufferedReader bufferedReader) {
         this.lineStorage = lineStorage;
         this.bufferedReader = bufferedReader;
-        this.isLinePrinted = isLinePrinted;
+
     }
 
     @Override
     public void run() {
         String line;
-        synchronized (lineStorage){
+        synchronized (lineStorage) {
             try {
-
-                while ((line = bufferedReader.readLine()) != null){
+                while ((line = bufferedReader.readLine()) != null) {
                     lineStorage.setLine(line);
-                    lineStorage.notifyAll();
-                    System.out.println("1");
+                    lineStorage.isFinished().set(false);
+
+                    lineStorage.notify();
+
+
                     try {
                         lineStorage.wait();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+            lineStorage.notifyAll();
         }
-        lineStorage.isFinished().set(true);
-        isLinePrinted.set(false);
-        lineStorage.notifyAll();
     }
+
 }

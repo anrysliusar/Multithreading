@@ -8,13 +8,11 @@ public class Main {
         LineStorage lineStorage = new LineStorage();
         BufferedReader bufferedReader = new BufferedReader(new FileReader("src/lines.txt"));
 
-        AtomicBoolean isLinePrinted = new AtomicBoolean(false);
+        ContentPrinter contentPrinter = new ContentPrinter(lineStorage);
+        ContentReader contentReader = new ContentReader(lineStorage, bufferedReader);
 
-        ContentPrinter contentPrinter = new ContentPrinter(lineStorage, isLinePrinted);
-        ContentReader contentReader = new ContentReader(lineStorage, bufferedReader, isLinePrinted);
-
-        Thread reader = new Thread(contentReader);
         Thread printer = new Thread(contentPrinter);
+        Thread reader = new Thread(contentReader);
 
         reader.start();
         printer.start();
